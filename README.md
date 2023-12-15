@@ -18,39 +18,39 @@ Used the first docker image version. Though my Mac is an apple chip, creating a 
 
 3. Fact-checking
 
-   If dont use Google we need to check facts in certain databases. 
+   If dont use Google we need to check facts in certain databases, e.g Wikidata
 
    
 
-   In Wikidata:
+   *from* SPARQLWrapper *import* SPARQLWrapper, JSON
 
-   `*from* SPARQLWrapper *import* SPARQLWrapper, JSON`
+   sparql = SPARQLWrapper("https://query.wikidata.org/sparql")
 
-   `sparql = SPARQLWrapper("https://query.wikidata.org/sparql")`
+   *# this query checks Amsterdam(Q727) is in which country(P17)*
 
-   `*# this query checks Amsterdam(Q727) is in which country(P17)*`
+   *# the result shows "Netherlands"*
 
-   `*# the result shows "Netherlands"*`
+   sparql.setQuery("""
 
-   `sparql.setQuery("""`
+   SELECT ?countryLabel WHERE {
 
-   `SELECT ?countryLabel WHERE {`
+     wd:Q727 wdt:P17 ?country .
 
-     `wd:Q727 wdt:P17 ?country .`
+     SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 
-     `SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }`
+   }
 
-   `}`
+   """)
 
-   `""")`
+   sparql.setReturnFormat(JSON)
 
-   `sparql.setReturnFormat(JSON)`
+   results = sparql.query().convert()
 
-   `results = sparql.query().convert()`
+   *for* result *in* results["results"]["bindings"]:
 
-   `*for* result *in* results["results"]["bindings"]:`
+   ​    print(result["countryLabel"]["value"])
 
-   ​    `print(result["countryLabel"]["value"])`
+   
 
    This could be run in Python after installing SPARQLWrapper. If we want to use this, we also need to **extract the relation** to construct a query. 
 
